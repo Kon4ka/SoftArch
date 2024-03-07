@@ -2,10 +2,9 @@ workspace {
     name "Умный дом"
     description "Простая система управления умного дома с базовыми функциями контроля состояния атмосферы в помещении"
 
-    # включаем режим с иерархической системой идентификаторов
     !identifiers hierarchical
 
-    # Модель архитектуры
+
     model {
         properties { 
             structurizr.groupSeparator "/"
@@ -20,11 +19,6 @@ workspace {
 
             user_service = container "User Service" {
                 description "Сервис для управления пользователями"
-                technology "REST API"
-            }
-
-            report_service = container "Report Service" {
-                description "Сервис для управления докладами"
                 technology "REST API"
             }
 
@@ -54,13 +48,13 @@ workspace {
             }
 
             user_service -> postgres_database "CRUD операции с пользователями и конференциями"
-            user_service -> redis_cache "Авторизация пользователей"
-            report_service -> mongo_database "CRUD операции с докладами"
+            user_service -> redis_cache "Быстрая авторизация пользователей"
             conference_service -> postgres_database "Связывание докладов с конференциями"
+            user_service -> mongo_database "Сохранить файл доклада"
 
-            user -> user_service "Регистрация, поиск"
-            user -> report_service "Создание, получение списка докладов"
-            user -> conference_service "Добавление доклада, получение списка докладов в конференции"
+
+            user -> user_service "Регистрация пользователя, добавление доклада и получение списка всех своих докладов, получение участия в конференциях"
+            user -> conference_service "Добавление доклада в конференцию, получение списка докладов в конференции"
         }
     }
 
@@ -82,7 +76,7 @@ workspace {
             user -> conference_system.user_service "Создать нового пользователя (POST /users)"
             conference_system.user_service -> conference_system.postgres_database "Сохранить данные о пользователе"
             conference_system.user_service -> conference_system.redis_cache "Кэшировать данные о пользователе"
-}
+        }
 
         dynamic conference_system "UC02" "Поиск пользователя по логину" {
             autoLayout
@@ -93,8 +87,9 @@ workspace {
 
         dynamic conference_system "UC03" "Создание доклада" {
             autoLayout
-            user -> conference_system.report_service "Создать доклад (POST /reports)"
-            conference_system.report_service -> conference_system.mongo_database "Сохранить доклад"
+            user -> conference_system.user_service "Создать доклад (POST /reports)"
+            conference_system.user_service -> conference_system.postgres_database "Сохранить ID доклад"
+            conference_system.user_service -> conference_system.mongo_database "Сохранить файл доклада"
         }
 
         dynamic conference_system "UC04" "Добавление доклада в конференцию" {
