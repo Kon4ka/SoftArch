@@ -64,52 +64,50 @@ workspace {
             user -> conference_service "Добавление доклада в конференцию, получение списка докладов в конференции"
             user -> report_service "Создание, чтение, обновление и удаление докладов"
         }
+
         deploymentEnvironment "Production" {
-    deploymentNode "AWS" {
-        deploymentNode "EC2 Cluster" {
-            containerInstance conference_system.user_service
-            containerInstance conference_system.conference_service
-            containerInstance conference_system.report_service
-            properties {
-                "cpu" "8"
-                "ram" "512Gb"
-                "hdd" "8Tb"
+        deploymentNode "AWS" {
+            deploymentNode "EC2 Cluster" {
+                containerInstance conference_system.user_service
+                containerInstance conference_system.conference_service
+                containerInstance conference_system.report_service
+                properties {
+                    "cpu" "8"
+                    "ram" "512Gb"
+                    "hdd" "8Tb"
+                }
             }
-        }
 
-        deploymentNode "RDS Cluster" {
-            containerInstance conference_system.postgres_database
-            instances 2
-            properties {
-                "cpu" "4"
-                "ram" "256Gb"
-                "hdd" "4Tb"
+            deploymentNode "Posgres Cluster" {
+                containerInstance conference_system.postgres_database
+                properties {
+                    "cpu" "4"
+                    "ram" "256Gb"
+                    "hdd" "4Tb"
+                }
             }
-        }
 
-        deploymentNode "Cache Cluster" {
-            containerInstance conference_system.redis_cache
-            instances 2
-            properties {
-                "cpu" "2"
-                "ram" "128Gb"
-                "hdd" "2Tb"
+            deploymentNode "Cache Cluster" {
+                containerInstance conference_system.redis_cache
+                properties {
+                    "cpu" "2"
+                    "ram" "128Gb"
+                    "hdd" "2Tb"
+                }
             }
-        }
 
-        deploymentNode "DocumentDB Cluster" {
-            containerInstance conference_system.mongo_database
-            instances 3
-            properties {
-                "cpu" "4"
-                "ram" "256Gb"
-                "hdd" "4Tb"
+            deploymentNode "DocumentDB Cluster" {
+                containerInstance conference_system.mongo_database
+                instances 3
+                properties {
+                    "cpu" "4"
+                    "ram" "256Gb"
+                    "hdd" "4Tb"
+                }
             }
         }
     }
 }
-
-    }
 
 
     views {
