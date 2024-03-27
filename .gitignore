@@ -195,4 +195,13 @@ logpath/
 *.wrk
 
 # Circuit Breaker
-# Здесь вы можете добавить специфические файлы
+
+# Ignore virtual environment
+venv/
+
+# Ignore image files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
