@@ -182,8 +182,6 @@ logpath/
 **/.env.production
 **/.env.staging
 **/.env.preview
-**/docker-compose.yml
-**/Dockerfile
 **/Dockerfile.prod
 **/.dockerignore
 **/nginx.conf

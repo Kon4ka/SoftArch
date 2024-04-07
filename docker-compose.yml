@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+  arch:
+    tty: true
+    container_name: arch
+    volumes:
+      - .:/opt/arch
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5005:5005
+    networks:
+      - arch-network
+
+  db:
+    container_name: postgres
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=stud
+      - POSTGRES_PASSWORD=stud
+      - PGDATA=/data/postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - arch-network
+
+# volumes:
+#   db:
+#   cache:
+#   mongodbdata:
+
+
+networks:
+  arch-network:
+    driver: "bridge"
+    external: false
