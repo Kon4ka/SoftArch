@@ -72,3 +72,14 @@ index.yml
 7. Создайте Dockerfile для вашего сервиса
 8. Протестируйте его работу в Docker
 9. Опубликуйте на GitHub проект
+
+### Запуск Лабораторной №2 
+1. Включить docker
+2. docker-compose upи (и посмотреть как всё красиво разворачивается)
+3. В другом терминале в корневой папке сделать python test.py (для тестовых запросов в БД)
+4. (Опционально) Проверить БД:
+    1. docker exec -it postgres /bin/bash
+    2. psql -U stud -d postgres - подключться к postgres
+    3. \c conference_db - зайти базу данных conference_db
+    4. \dt - посмотреть какие там таблицы командой
+    5. Выполнить Select * from reports
