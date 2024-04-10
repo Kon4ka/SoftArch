@@ -1,0 +1,47 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+    networks:
+      - arch-network
+
+  conferences:
+    container_name: conferences
+    build:
+      context: ./conferences_api/
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - arch-network
+
+  reports:
+    container_name: reports
+    build:
+      context: ./reports_api/
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8080
+    networks:
+      - arch-network
+
+  data_generator:
+    container_name: data_generator
+    build:
+      context: ./data_generator/
+      dockerfile: Dockerfile
+    networks:
+      - arch-network
+
+networks:
+  arch-network:
+    driver: "bridge"
+    external: false
