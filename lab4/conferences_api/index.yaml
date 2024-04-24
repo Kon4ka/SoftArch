@@ -1,0 +1,142 @@
+openapi: 3.1.0
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+  /conferences/:
+    post:
+      summary: Create Conference
+      operationId: create_conference_conferences__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              title: Conference Data
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: string
+                title: Response Create Conference Conferences  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /conferences/{conference_id}/:
+    get:
+      summary: Read Conference
+      operationId: read_conference_conferences__conference_id___get
+      parameters:
+      - name: conference_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conference Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Read Conference Conferences  Conference Id   Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      summary: Update Conference
+      operationId: update_conference_conferences__conference_id___put
+      parameters:
+      - name: conference_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conference Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: Updated Data
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: integer
+                title: Response Update Conference Conferences  Conference Id   Put
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      summary: Delete Conference
+      operationId: delete_conference_conferences__conference_id___delete
+      parameters:
+      - name: conference_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conference Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: integer
+                title: Response Delete Conference Conferences  Conference Id   Delete
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
