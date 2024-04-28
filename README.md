@@ -83,3 +83,9 @@ index.yml
     3. \c conference_db - зайти базу данных conference_db
     4. \dt - посмотреть какие там таблицы командой
     5. Выполнить Select * from reports
+
+### Запуск Лабораторной №3 и 4
+1. Включить docker
+2. docker-compose up в папке lab 4 (там исправленный вариант 3 лабы)
+3. Дождаться пока все развернется и все всех увидят
+4. http://localhost:8080/docs - swagger со списком api
