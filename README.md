@@ -75,10 +75,11 @@ index.yml
 
 ### Запуск Лабораторной №2 
 1. Включить docker
-2. docker-compose up (и посмотреть как всё красиво разворачивается)
-3. (Опционально) В другом терминале в корневой папке сделать python test.py (для тестовых запросов в БД)
-4. http://localhost:5005/docs - swagger со списком api
-5. Проверить БД:
+2. Зайти в папку lab2
+3. docker-compose up (и посмотреть как всё красиво разворачивается)
+4. (Опционально) В другом терминале в корневой папке сделать python test.py (для тестовых запросов в БД)
+5. http://localhost:5005/docs - swagger со списком api
+6. Проверить БД:
     1. docker exec -it postgres /bin/bash
     2. psql -U stud -d postgres - подключться к postgres
     3. \c conference_db - зайти базу данных conference_db
@@ -87,9 +88,10 @@ index.yml
 
 ### Запуск Лабораторной №3 и 4
 1. Включить docker
-2. docker-compose up в папке lab 4 (там исправленный вариант 3 лабы)
-3. Дождаться пока все развернется и все всех увидят
-4. http://localhost:8080/docs - swagger со списком api
+2. Зайти в папку lab4
+3. docker-compose up в папке lab 4 (там исправленный вариант 3 лабы)
+4. Дождаться пока все развернется и все всех увидят
+5. http://localhost:8080/docs - swagger со списком api
    - по отдельным портам доступны отдельные контейнеры (user_service - 8080, conferences - 8081, reports - 8082)
    - Для загрузки данных есть отдельный контейнер lab4_data_generator
   
