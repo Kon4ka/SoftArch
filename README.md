@@ -76,8 +76,9 @@ index.yml
 ### Запуск Лабораторной №2 
 1. Включить docker
 2. docker-compose upи (и посмотреть как всё красиво разворачивается)
-3. В другом терминале в корневой папке сделать python test.py (для тестовых запросов в БД)
-4. (Опционально) Проверить БД:
+3. (Опционально) В другом терминале в корневой папке сделать python test.py (для тестовых запросов в БД)
+4. http://localhost:5005/docs - swagger со списком api
+5. Проверить БД:
     1. docker exec -it postgres /bin/bash
     2. psql -U stud -d postgres - подключться к postgres
     3. \c conference_db - зайти базу данных conference_db
