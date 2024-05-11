@@ -11,6 +11,9 @@ services:
       - 8080:8080
     networks:
       - arch-network
+    depends_on:
+      data_generator:
+        condition: service_completed_successfully
 
   conferences:
     container_name: conferences
@@ -21,6 +24,9 @@ services:
       - 8081:8080
     networks:
       - arch-network
+    depends_on:
+      data_generator:
+        condition: service_completed_successfully
 
   reports:
     container_name: reports
@@ -31,6 +37,9 @@ services:
       - 8082:8080
     networks:
       - arch-network
+    depends_on:
+      data_generator:
+        condition: service_completed_successfully
 
   db:
     container_name: postgres
@@ -62,6 +71,12 @@ services:
       - 27017:27017
     networks:
       - arch-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
 
   data_generator:
     container_name: data_generator
@@ -70,6 +85,12 @@ services:
       dockerfile: Dockerfile
     networks:
       - arch-network
+    depends_on:
+      mongo:
+        condition: service_healthy
+      db: 
+        condition: service_healthy
+        
 
 networks:
   arch-network:

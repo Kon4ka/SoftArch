@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from utils.postgres_connector import PostgresConnector
 import psycopg2
 from models.user_model import NewUserModel, UpdateUserModel
 import hashlib
-
+from routers.login_router import auth
 router = APIRouter()
 
 connection = PostgresConnector(db_name="conference_db")
@@ -11,10 +11,20 @@ connection = PostgresConnector(db_name="conference_db")
 
 @router.get("/find_by_name")
 async def find_by_prefix(name: str, surname: str, cursor: psycopg2.extensions.cursor = Depends(connection.get_cursor)):
-    sql_command = f"SELECT user_id, user_login, user_name, user_surname from users " \
-        f"WHERE user_name LIKE '{name}%' AND user_surname  LIKE '{surname}%'"
+    sql_command = "SELECT user_id, user_login, user_name, user_surname from users " + "\n"
+    where_command = ""
+    if name and surname:
+        where_command = f"WHERE user_name LIKE '{
+            name}%' AND user_surname  LIKE '{surname}%'"
+    elif name:
+        where_command = f"WHERE user_name LIKE '{name}%'"
+    elif surname:
+        where_command = f"WHERE user_surname LIKE '{surname}%'"
+    sql_command += where_command
+    print(sql_command)
     cursor.execute(sql_command)
     result = cursor.fetchall()
+    cursor.close()
     return result
 
 
@@ -24,6 +34,7 @@ async def find_by_prefix(login, cursor: psycopg2.extensions.cursor = Depends(con
         login}%'"
     cursor.execute(sql_command)
     result = cursor.fetchall()
+    cursor.close()
     return result
 
 
@@ -35,6 +46,7 @@ async def find_by_prefix(id: int, cursor: psycopg2.extensions.cursor = Depends(c
     print(sql_command)
     cursor.execute(sql_command)
     result = cursor.fetchall()
+    cursor.close()
     return result
 
 
@@ -48,24 +60,33 @@ async def new_user(new_user: NewUserModel, cursor: psycopg2.extensions.cursor = 
                        new_user.user_surname, hashed_password)
         cursor.execute(sql_command, data)
         cursor.connection.commit()
+        cursor.close()
     except Exception as e:
         print(e)
         cursor.connection.rollback()
-        return {"message": "User created unsuccessfully"}
+        cursor.close()
+        return HTTPException(status_code=400, detail="User created unsuccessfully")
     return {"message": "User created successfully"}
 
 
 @router.delete("/delete")
-async def delete_user(id: int, cursor: psycopg2.extensions.cursor = Depends(connection.get_cursor)):
+async def delete_user(id: int, token: str, cursor: psycopg2.extensions.cursor = Depends(connection.get_cursor)):
     try:
-        tuple_id: tuple = (id,)
-        sql_command = "DELETE FROM users WHERE user_id=%s"
-        cursor.execute(sql_command, tuple_id)
-        cursor.connection.commit()
+        user_info = auth(token=token)
+        print(user_info)
+        if "user_id" in user_info and user_info["user_id"] == id:
+            tuple_id: tuple = (id,)
+            sql_command = "DELETE FROM users WHERE user_id=%s"
+            cursor.execute(sql_command, tuple_id)
+            cursor.connection.commit()
+            cursor.close()
+        else:
+            return HTTPException(status_code=402, detail="Invalid authentication credentials")
     except Exception as e:
         print(e)
         cursor.connection.rollback()
-        return {"message": "User deleted unsuccessfully"}
+        cursor.close()
+        return HTTPException(status_code=400, detail="User deleted unsuccessfully")
     return {"message": "User deleted successfully"}
 
 
@@ -87,8 +108,10 @@ async def find_by_prefix(updated_user: UpdateUserModel, cursor: psycopg2.extensi
         # # Выполнить запрос на обновление
         cursor.execute(sql, values + [user_id])
         cursor.connection.commit()
+        cursor.close()
     except Exception as e:
         print(e)
         cursor.connection.rollback()
+        cursor.close()
         return {"message": "User updated unsuccessfully"}
     return {"message": "User updated successfully"}
