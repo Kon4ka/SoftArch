@@ -1,6 +1,17 @@
 version: '3.7'
 services:
 
+  gateway_service:
+    tty: true
+    container_name: gateway_service
+    build:
+      context: ./gateway_api
+      dockerfile: Dockerfile
+    ports:
+      - 8084:8080
+    networks:
+      - arch-network
+
   users_service:
     tty: true
     container_name: user_service
@@ -11,9 +22,9 @@ services:
       - 8080:8080
     networks:
       - arch-network
-    depends_on:
-      data_generator:
-        condition: service_completed_successfully
+    # depends_on:
+    #   data_generator:
+    #     condition: service_completed_successfully
 
   conferences:
     container_name: conferences
@@ -24,9 +35,9 @@ services:
       - 8081:8080
     networks:
       - arch-network
-    depends_on:
-      data_generator:
-        condition: service_completed_successfully
+    # depends_on:
+    #   data_generator:
+    #     condition: service_completed_successfully
 
   reports:
     container_name: reports
@@ -37,9 +48,9 @@ services:
       - 8082:8080
     networks:
       - arch-network
-    depends_on:
-      data_generator:
-        condition: service_completed_successfully
+    # depends_on:
+    #   data_generator:
+    #     condition: service_completed_successfully
 
   db:
     container_name: postgres
@@ -76,21 +87,35 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
 
-  data_generator:
-    container_name: data_generator
-    build:
-      context: ./init/
-      dockerfile: Dockerfile
+  # data_generator:
+  #   container_name: data_generator
+  #   build:
+  #     context: ./init/
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - arch-network
+  #   depends_on:
+  #     mongo:
+  #       condition: service_healthy
+  #     db: 
+  #       condition: service_healthy
+
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    environment:
+      - REDIS_PASSWORD=rina
     networks:
-      - arch-network
-    depends_on:
-      mongo:
-        condition: service_healthy
-      db: 
-        condition: service_healthy
-        
+      - arch-network        
 
 networks:
   arch-network:

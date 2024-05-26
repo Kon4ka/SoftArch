@@ -1,14 +1,12 @@
 
-from routers.user_router import router as user_router
-from routers.login_router import router as login_router
+from routers.gateway_router import router as gateway_router
 from fastapi import FastAPI, HTTPException, Request, status, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 app = FastAPI()
 
-app.include_router(user_router, tags=["Users"], prefix="/api/users")
-app.include_router(login_router, tags=["Login"], prefix="/api/login_router")
+app.include_router(gateway_router, tags=["Users"], prefix="/api/gateway")
 
 
 @app.exception_handler(RequestValidationError)

@@ -138,11 +138,6 @@ cython_debug/
 # Redis
 /dump.rdb
 
-# PostgreSQL
-*.sql
-*.pgsql
-*.pgdump
-
 # MongoDB
 *.lock
 mongod.conf

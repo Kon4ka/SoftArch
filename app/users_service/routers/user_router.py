@@ -15,7 +15,7 @@ async def find_by_prefix(name: str, surname: str, cursor: psycopg2.extensions.cu
     where_command = ""
     if name and surname:
         where_command = f"WHERE user_name LIKE '{
-            name}%' AND user_surname  LIKE '{surname}%'"
+            name} % ' AND user_surname  LIKE '{surname}%'"
     elif name:
         where_command = f"WHERE user_name LIKE '{name}%'"
     elif surname:
@@ -30,23 +30,31 @@ async def find_by_prefix(name: str, surname: str, cursor: psycopg2.extensions.cu
 
 @router.get("/find_by_login")
 async def find_by_prefix(login, cursor: psycopg2.extensions.cursor = Depends(connection.get_cursor)):
-    sql_command = f"SELECT user_id, user_login, user_name, user_surname from users WHERE user_login LIKE '{
-        login}%'"
-    cursor.execute(sql_command)
-    result = cursor.fetchall()
-    cursor.close()
+    try:
+        sql_command = f"SELECT user_id, user_login, user_name, user_surname from users WHERE user_login LIKE '{
+            login}%'"
+        cursor.execute(sql_command)
+        result = cursor.fetchall()
+        cursor.close()
+    except:
+        cursor.close()
+        raise HTTPException(status_code=400, detail="Некорректный ввод данных")
     return result
 
 
 @router.get("/info")
 async def find_by_prefix(id: int, cursor: psycopg2.extensions.cursor = Depends(connection.get_cursor)):
-    sql_command = \
-        f"SELECT user_id, user_login, user_name, user_surname from users "\
-        f"WHERE user_id = {id}"
-    print(sql_command)
-    cursor.execute(sql_command)
-    result = cursor.fetchall()
-    cursor.close()
+    try:
+        sql_command = \
+            f"SELECT user_id, user_login, user_name, user_surname from users "\
+            f"WHERE user_id = {id}"
+        print(sql_command)
+        cursor.execute(sql_command)
+        result = cursor.fetchall()
+        cursor.close()
+    except:
+        cursor.close()
+        raise HTTPException(status_code=400, detail="Некорректный ввод данных")
     return result
 
 
@@ -65,7 +73,8 @@ async def new_user(new_user: NewUserModel, cursor: psycopg2.extensions.cursor = 
         print(e)
         cursor.connection.rollback()
         cursor.close()
-        return HTTPException(status_code=400, detail="User created unsuccessfully")
+        raise HTTPException(
+            status_code=400, detail="User created unsuccessfully")
     return {"message": "User created successfully"}
 
 
@@ -86,8 +95,9 @@ async def delete_user(id: int, token: str, cursor: psycopg2.extensions.cursor = 
         print(e)
         cursor.connection.rollback()
         cursor.close()
-        return HTTPException(status_code=400, detail="User deleted unsuccessfully")
-    return {"message": "User deleted successfully"}
+        raise HTTPException(
+            status_code=400, detail="User deleted unsuccessfully")
+    return {"message": "User deleted successfully or was deleted earlier"}
 
 
 @router.put("/update")
@@ -103,15 +113,17 @@ async def find_by_prefix(updated_user: UpdateUserModel, cursor: psycopg2.extensi
 
         columns_to_update = ', '.join(
             [f"{key} = %s" for key in updated_user_dict.keys()])
-        sql = f"UPDATE users SET {columns_to_update} WHERE user_id = %s"
+        sql = f"UPDATE users SET {
+            columns_to_update} WHERE user_id = %s RETURNING user_id"
         values = list(updated_user_dict.values())
-        # # Выполнить запрос на обновление
         cursor.execute(sql, values + [user_id])
-        cursor.connection.commit()
-        cursor.close()
+        if cursor.fetchone():
+            return {"message": "User updated successfully"}
+        else:
+            raise Exception
     except Exception as e:
         print(e)
         cursor.connection.rollback()
         cursor.close()
-        return {"message": "User updated unsuccessfully"}
-    return {"message": "User updated successfully"}
+        raise HTTPException(
+            status_code=400, detail="User updated unsuccessfully")
