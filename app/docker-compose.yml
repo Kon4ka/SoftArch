@@ -22,9 +22,9 @@ services:
       - 8080:8080
     networks:
       - arch-network
-    # depends_on:
-    #   data_generator:
-    #     condition: service_completed_successfully
+    depends_on:
+      data_generator:
+        condition: service_completed_successfully
 
   conferences:
     container_name: conferences
@@ -35,9 +35,9 @@ services:
       - 8081:8080
     networks:
       - arch-network
-    # depends_on:
-    #   data_generator:
-    #     condition: service_completed_successfully
+    depends_on:
+      data_generator:
+        condition: service_completed_successfully
 
   reports:
     container_name: reports
@@ -48,9 +48,9 @@ services:
       - 8082:8080
     networks:
       - arch-network
-    # depends_on:
-    #   data_generator:
-    #     condition: service_completed_successfully
+    depends_on:
+      data_generator:
+        condition: service_completed_successfully
 
   db:
     container_name: postgres
@@ -93,18 +93,18 @@ services:
           memory: 2G
 
 
-  # data_generator:
-  #   container_name: data_generator
-  #   build:
-  #     context: ./init/
-  #     dockerfile: Dockerfile
-  #   networks:
-  #     - arch-network
-  #   depends_on:
-  #     mongo:
-  #       condition: service_healthy
-  #     db: 
-  #       condition: service_healthy
+  data_generator:
+    container_name: data_generator
+    build:
+      context: ./init/
+      dockerfile: Dockerfile
+    networks:
+      - arch-network
+    depends_on:
+      mongo:
+        condition: service_healthy
+      db: 
+        condition: service_healthy
 
   redis:
     image: redis

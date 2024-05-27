@@ -11,6 +11,7 @@ class ConferenceCRUD:
     def read_all(self):
         response = []
         for i in self.collection.find():
+            # print(i)
             conf = {}
             conf['_id'] = str(i['_id'])
             conf['name'] = str(i["name"])

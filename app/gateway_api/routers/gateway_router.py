@@ -29,6 +29,10 @@ def get_token(credentials: HTTPBasicCredentials):
             status_code=503, detail="User service unavailable due to Circuit Breaker")
     except requests.RequestException as e:
         raise HTTPException(status_code=503, detail=str(e))
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=400, detail="Что то не так с токеном, возможно, его не существуе")
 
 
 @router.get("/user_reports")

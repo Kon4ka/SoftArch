@@ -23,6 +23,7 @@ async def create_conference(conference_data: dict = Body(...)):
 async def get_all():
     try:
         conferences = conference_crud.read_all()
+        # print(conferences)
     except:
         raise HTTPException(
             status_code=400, detail="Some problems")
