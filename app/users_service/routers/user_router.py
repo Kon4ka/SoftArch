@@ -15,7 +15,7 @@ async def find_by_prefix(name: str, surname: str, cursor: psycopg2.extensions.cu
     where_command = ""
     if name and surname:
         where_command = f"WHERE user_name LIKE '{
-            name} % ' AND user_surname  LIKE '{surname}%'"
+            name}%' AND user_surname  LIKE '{surname}%'"
     elif name:
         where_command = f"WHERE user_name LIKE '{name}%'"
     elif surname:
